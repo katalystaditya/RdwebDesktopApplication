@@ -1,0 +1,41 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Billcom",
+  "version": "0.1.0",
+  "identifier": "com.billcom.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1423",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Bill.com",
+        "width": 800,
+        "height": 600,
+        "center" : true,
+        "resizable": false,
+        "minimizable": false,
+        "maximizable": false,
+        "closable": true,
+        "fullscreen": false,
+        "maximized": true,
+        "focus" : true,
+        "alwaysOnTop": false,
+        "url": "https://app02.us.bill.com/neo/frame/overview"
+        }
+      ],
+      "security": {
+        "csp": "default-src 'self' https://app02.us.bill.com/neo/frame/overview;"
+      }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/bill.ico"
+    ]
+  }
+}

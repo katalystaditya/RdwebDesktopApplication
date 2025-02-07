@@ -1,0 +1,73 @@
+name: Release Bundles
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'Bill.com/src-tauri/target/release/bundle/msi/*.msi'
+      - 'Bill.com/src-tauri/target/release/bundle/nsis/*.exe'
+      - 'BillandPay/src-tauri/target/release/bundle/msi/*.msi'
+      - 'BillandPay/src-tauri/target/release/bundle/nsis/*.exe'
+      - 'Expensify/src-tauri/target/release/bundle/msi/*.msi'
+      - 'Expensify/src-tauri/target/release/bundle/nsis/*.exe'
+      - 'Rewind/src-tauri/target/release/bundle/msi/*.msi'
+      - 'Rewind/src-tauri/target/release/bundle/nsis/*.exe'
+      - 'eFileCabinet/src-tauri/target/release/bundle/msi/*.msi'
+      - 'eFileCabinet/src-tauri/target/release/bundle/nsis/*.exe'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Fetch all history to ensure we can create tags
+
+    - name: List files to be released
+      id: list_files
+      run: |
+        echo "MSI files to upload:"
+        ls -la Bill.com/src-tauri/target/release/bundle/msi/*.msi || true
+        ls -la BillandPay/src-tauri/target/release/bundle/msi/*.msi || true
+        ls -la Expensify/src-tauri/target/release/bundle/msi/*.msi || true
+        ls -la Rewind/src-tauri/target/release/bundle/msi/*.msi || true
+        ls -la eFileCabinet/src-tauri/target/release/bundle/msi/*.msi || true
+        echo "EXE files to upload:"
+        ls -la Bill.com/src-tauri/target/release/bundle/nsis/*.exe || true
+        ls -la BillandPay/src-tauri/target/release/bundle/nsis/*.exe || true
+        ls -la Expensify/src-tauri/target/release/bundle/nsis/*.exe || true
+        ls -la Rewind/src-tauri/target/release/bundle/nsis/*.exe || true
+        ls -la eFileCabinet/src-tauri/target/release/bundle/nsis/*.exe || true
+
+    - name: Generate tag name
+      id: generate_tag
+      run: |
+        TAG_NAME="release-$(date +'%Y%m%d-%H%M%S')"
+        echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.TAG_NAME }}
+        name: "Release ${{ env.TAG_NAME }}"
+        body: |
+          Automated release containing specified MSI and EXE files.
+          
+          Generated on: $(date +'%Y-%m-%d %H:%M:%S')
+        files: |
+          Bill.com/src-tauri/target/release/bundle/msi/*.msi
+          Bill.com/src-tauri/target/release/bundle/nsis/*.exe
+          BillandPay/src-tauri/target/release/bundle/msi/*.msi
+          BillandPay/src-tauri/target/release/bundle/nsis/*.exe
+          Expensify/src-tauri/target/release/bundle/msi/*.msi
+          Expensify/src-tauri/target/release/bundle/nsis/*.exe
+          Rewind/src-tauri/target/release/bundle/msi/*.msi
+          Rewind/src-tauri/target/release/bundle/nsis/*.exe
+          eFileCabinet/src-tauri/target/release/bundle/msi/*.msi
+          eFileCabinet/src-tauri/target/release/bundle/nsis/*.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
